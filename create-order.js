@@ -29,10 +29,23 @@ async function getAccessToken() {
   }
 }
 
-let monToken = getAccessToken().catch(console.error);
+let accessToken = null;
+
+const refreshTokenMiddleware = async (req, res, next) => {
+  try {
+    if (!accessToken) {
+      accessToken = await getAccessToken();
+    }
+    next();
+  } catch (error) {
+    console.error("Error refreshing access token:", error);
+    res.status(500).json({ error: "Failed to get access token." });
+  }
+};
+
 
 // Route ce creation de paiement
-app.post("/create-order", async (req, res) => {
+app.post("/create-order", refreshTokenMiddleware, async (req, res) => {
   const { amount, currency } = req.body;
 
   if (!amount || !currency) {
