@@ -6,7 +6,6 @@ const PORT = 3000;
 
 app.use(express.json());
  
-
 async function getAccessToken() {
   const response = await fetch("https://demo-accounts.vivapayments.com/connect/token", {
     method: "POST",
@@ -15,8 +14,8 @@ async function getAccessToken() {
     },
     body: new URLSearchParams({
       grant_type: "client_credentials",
-      client_id: "69upvpezosc0e06egvbwjwh19qgcmyd3y9wembj0cn260.apps.vivapayments.com", // Replace with your Client ID
-      client_secret: "MzGSKzc3PRTi881s1Q2rewV086u7wG", // Replace with your Client Secret
+      client_id: "69upvpezosc0e06egvbwjwh19qgcmyd3y9wembj0cn260.apps.vivapayments.com", //  Client ID
+      client_secret: "MzGSKzc3PRTi881s1Q2rewV086u7wG", // Client Secret
     }),
   });
 
@@ -32,7 +31,7 @@ async function getAccessToken() {
 
 let monToken = getAccessToken().catch(console.error);
 
-// Route to create an order
+// Route ce creation de paiement
 app.post("/create-order", async (req, res) => {
   const { amount, currency } = req.body;
 
@@ -41,15 +40,15 @@ app.post("/create-order", async (req, res) => {
   }
 
   try {
-    // Call Viva Wallet API to create an order
+    // appel de viva wallet
     const response = await fetch("https://demo-api.vivapayments.com/api/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${monToken}`, // Replace with your Viva Wallet token
+        Authorization: `Bearer ${monToken}`, // Viva Wallet token
       },
       body: JSON.stringify({
-        amount: amount, // Amount in cents
+        amount: amount, // montznt en cents
         customerTrns: "Payment for order",
       }),
     });
@@ -57,7 +56,7 @@ app.post("/create-order", async (req, res) => {
     const data = await response.json();
 
     if (response.ok) {
-      // Send the orderCode back to the frontend
+      
       res.json({ orderCode: data.orderCode });
     } else {
       res.status(500).json({ error: data.message || "Failed to create order." });
@@ -68,7 +67,7 @@ app.post("/create-order", async (req, res) => {
   }
 });
 
-// Start the server
+ 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
