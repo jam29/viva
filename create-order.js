@@ -1,10 +1,9 @@
-const express = require("express");
+
 const fetch = require("node-fetch");
 
-const app = express();
 const PORT = 3000;
 
-app.use(express.json());
+
  
 async function getAccessToken() {
   const response = await fetch("https://demo-accounts.vivapayments.com/connect/token", {
@@ -29,39 +28,19 @@ async function getAccessToken() {
   }
 }
 
-let accessToken = null;
-
-const refreshTokenMiddleware = async (req, res, next) => {
-  try {
-    if (!accessToken) {
-      accessToken = await getAccessToken();
-    }
-    next();
-  } catch (error) {
-    console.error("Error refreshing access token:", error);
-    res.status(500).json({ error: "Failed to get access token." });
-  }
-};
-
+let accessToken = await getAccessToken();
 
 // Route ce creation de paiement
-app.post("/create-order", refreshTokenMiddleware, async (req, res) => {
-  const { amount, currency } = req.body;
-
-  if (!amount || !currency) {
-    return res.status(400).json({ error: "Amount and currency are required." });
-  }
-
   try {
     // appel de viva wallet
     const response = await fetch("https://demo-api.vivapayments.com/api/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${monToken}`, // Viva Wallet token
+        Authorization: `Bearer ${accessToken}`, // Viva Wallet token
       },
       body: JSON.stringify({
-        amount: amount, // montznt en cents
+        amount: 500, // montznt en cents
         customerTrns: "Payment for order",
       }),
     });
@@ -78,7 +57,7 @@ app.post("/create-order", refreshTokenMiddleware, async (req, res) => {
     console.error("Error creating order:", error);
     res.status(500).json({ error: "Internal server error." });
   }
-});
+
 
  
 app.listen(PORT, () => {
