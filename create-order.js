@@ -1,7 +1,7 @@
 
 const fetch = require("node-fetch");
 
-// Function to get access token
+// recup token
 async function getAccessToken() {
   const response = await fetch("https://demo-accounts.vivapayments.com/connect/token", {
     method: "POST",
@@ -11,7 +11,7 @@ async function getAccessToken() {
     body: new URLSearchParams({
       grant_type: "client_credentials",
       client_id: "69upvpezosc0e06egvbwjwh19qgcmyd3y9wembj0cn260.apps.vivapayments.com", // Client ID
-      client_secret: "MzGSKzc3PRTi881s1Q2rewV086u7wG", // Client Secret
+      client_secret: "7dcyHgW06Cif2yaNm3Yvq5OG374iZS", // Client Secret
     }),
   });
 
@@ -25,13 +25,13 @@ async function getAccessToken() {
   }
 }
 
-// Function to create a payment order
+// Function de paiement
 async function createOrder() {
   try {
-    // Fetch access token
+    
     const accessToken = await getAccessToken();
 
-    // Call Viva Wallet API to create an order
+    // Call Viva Wallet API
     const response = await fetch("https://demo-api.vivapayments.com/api/orders", {
       method: "POST",
       headers: {
@@ -39,7 +39,7 @@ async function createOrder() {
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
-        amount: 500, // Amount in cents
+        amount: 500, // montant en cents
         customerTrns: "Payment for order",
       }),
     });
@@ -55,6 +55,5 @@ async function createOrder() {
     console.error("Error:", error.message);
   }
 }
-
-// Run the createOrder function
+ 
 createOrder();
