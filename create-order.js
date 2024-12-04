@@ -1,10 +1,7 @@
 
 const fetch = require("node-fetch");
 
-const PORT = 3000;
-
-
- 
+// Function to get access token
 async function getAccessToken() {
   const response = await fetch("https://demo-accounts.vivapayments.com/connect/token", {
     method: "POST",
@@ -13,7 +10,7 @@ async function getAccessToken() {
     },
     body: new URLSearchParams({
       grant_type: "client_credentials",
-      client_id: "69upvpezosc0e06egvbwjwh19qgcmyd3y9wembj0cn260.apps.vivapayments.com", //  Client ID
+      client_id: "69upvpezosc0e06egvbwjwh19qgcmyd3y9wembj0cn260.apps.vivapayments.com", // Client ID
       client_secret: "MzGSKzc3PRTi881s1Q2rewV086u7wG", // Client Secret
     }),
   });
@@ -28,19 +25,21 @@ async function getAccessToken() {
   }
 }
 
-let accessToken = getAccessToken();
-
-// Route ce creation de paiement
+// Function to create a payment order
+async function createOrder() {
   try {
-    // appel de viva wallet
+    // Fetch access token
+    const accessToken = await getAccessToken();
+
+    // Call Viva Wallet API to create an order
     const response = await fetch("https://demo-api.vivapayments.com/api/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`, // Viva Wallet token
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
-        amount: 500, // montznt en cents
+        amount: 500, // Amount in cents
         customerTrns: "Payment for order",
       }),
     });
@@ -48,13 +47,14 @@ let accessToken = getAccessToken();
     const data = await response.json();
 
     if (response.ok) {
-      
-      res.json({ orderCode: data.orderCode });
+      console.log("Order Created Successfully:", data.orderCode);
     } else {
-      res.status(500).json({ error: data.message || "Failed to create order." });
+      console.error("Error Creating Order:", data.message);
     }
   } catch (error) {
-    console.error("Error creating order:", error);
-    res.status(500).json({ error: "Internal server error." });
+    console.error("Error:", error.message);
   }
+}
 
+// Run the createOrder function
+createOrder();
