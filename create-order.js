@@ -30,7 +30,7 @@ async function getAccessToken() {
   }
 }
 
-let monToken = getAccessToken()
+let monToken = getAccessToken().catch(console.error);
 
 // Route to create an order
 app.post("/create-order", async (req, res) => {
