@@ -12,12 +12,12 @@
 document.getElementById("payButton").addEventListener("click", async () => {
   try {
     // Étape 1 : Récupérez le token de commande depuis votre serveur
-    const response = await fetch("https://votre-backend.com/create-order", {
+    const response = await fetch("http://185.224.139.131/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount: 1000, currency: "EUR" }) // Montant en cents
     });
-    
+
     const data = await response.json();
 
     // Étape 2 : Lancer le Smart Checkout
