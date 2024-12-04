@@ -28,7 +28,7 @@ async function getAccessToken() {
   }
 }
 
-let accessToken = await getAccessToken();
+let accessToken = getAccessToken();
 
 // Route ce creation de paiement
   try {
